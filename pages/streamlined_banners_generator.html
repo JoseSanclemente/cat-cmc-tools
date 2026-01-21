@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Streamlined Banner Generator</title>
+    <style>
+      :root {
+        --primary-color: #ffcd11;
+        --primary-hover: #e6b800;
+        --secondary-color: #000000;
+        --secondary-hover: #333333;
+        --bg-color: #f4f4f9;
+        --container-bg: #ffffff;
+        --text-color: #333333;
+        --text-muted: #555555;
+        --border-color: #dddddd;
+        --border-light: #eeeeee;
+        --border-dashed: #cccccc;
+        --input-bg: #f8f9fa;
+        --error-color: #dc3545;
+        --error-bg: #fff8f8;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: var(--bg-color);
+        padding: 40px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: var(--container-bg);
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        margin-top: 0;
+        margin-top: 0;
+        color: var(--text-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: var(--text-muted);
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-size: 16px;
+        box-sizing: border-box;
+      }
+      button {
+        background: var(--primary-color);
+        color: var(--secondary-color);
+        font-weight: bold;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        margin-top: 10px;
+        transition: background 0.2s;
+      }
+      button:hover {
+        background: var(--primary-hover);
+      }
+      button.secondary {
+        background: var(--secondary-color);
+        color: var(--container-bg);
+        margin-top: 10px;
+      }
+      button.secondary:hover {
+        background: var(--secondary-hover);
+      }
+      .output-section {
+        margin-top: 30px;
+        border-top: 2px solid var(--border-light);
+        padding-top: 20px;
+      }
+      textarea {
+        width: 100%;
+        height: 150px;
+        font-family: monospace;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background: var(--input-bg);
+        color: var(--text-color);
+      }
+      .preview-box {
+        border: 1px dashed var(--border-dashed);
+        padding: 20px;
+        margin-top: 15px;
+        background: var(--container-bg);
+      }
+      .input-error {
+        border: 2px solid var(--error-color) !important;
+        background-color: var(--error-bg);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Caterpillar_logo.svg"
+          alt="Caterpillar Logo"
+          style="height: 40px; vertical-align: middle; margin-right: 10px"
+        />
+        Streamlined Banner Generator
+      </h2>
+
+      <div class="form-group">
+        <label for="language">Select Language:</label>
+        <select id="language"></select>
+      </div>
+
+      <div class="form-group">
+        <label for="promoType">Promotion Type:</label>
+        <select id="promoType" onchange="toggleFields()">
+          <option value="category">Category Promotion</option>
+          <option value="sitewide">Site Wide Promotion</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="categoryGroup">
+        <label>Category Name:</label>
+        <input type="text" id="category" placeholder="Ex: Batteries" />
+      </div>
+
+      <div class="form-group">
+        <label>Promo Code (Optional):</label>
+        <input type="text" id="code" placeholder="Ex: BAT20" />
+      </div>
+
+      <div class="form-group">
+        <label>Discount Percentage:</label>
+        <input type="text" id="percentage" placeholder="Ex: 20" />
+      </div>
+
+      <div class="form-group">
+        <label id="ctaUrlLabel">CTA URL:</label>
+        <input
+          type="text"
+          id="ctaUrl"
+          placeholder="Ex: ground-engaging-tools"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Terms & Conditions URL:</label>
+        <input
+          type="text"
+          id="externalUrl"
+          placeholder="Ex: https://parts.cat.com/es/toromont/promo-yellow-thursday"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Start Date & Time:</label>
+        <div style="display: flex; gap: 10px">
+          <input type="date" id="startDate" style="flex: 1" />
+          <input type="time" id="startTime" style="flex: 1" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>End Date & Time:</label>
+        <div style="display: flex; gap: 10px">
+          <input type="date" id="endDate" style="flex: 1" />
+          <input type="time" id="endTime" style="flex: 1" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Dealer Name:</label>
+        <input type="text" id="dealerName" placeholder="Ex: DealerName" />
+      </div>
+
+      <div class="form-group">
+        <label>Ticket Number:</label>
+        <input type="text" id="ticketNumber" placeholder="Ex: 12345" />
+      </div>
+
+      <div class="form-group">
+        <label>Target:</label>
+        <select id="target">
+          <option value="All Customers">All Customers</option>
+          <option value="Only Specified DCN's can see this promotion">
+            Only Specified DCN's can see this promotion
+          </option>
+          <option value="Only guests can see this promotion">
+            Only guests can see this promotion
+          </option>
+          <option value="Only registered users can see this promotion">
+            Only registered users can see this promotion
+          </option>
+        </select>
+      </div>
+
+      <button onclick="generateCode()">Generate HTML</button>
+
+      <div class="output-section" id="results" style="display: none">
+        <label>Final HTML Code:</label>
+        <textarea id="finalHtml"></textarea>
+        <label style="margin-top: 10px; display: block">Content File:</label>
+        <textarea id="fileName" style="height: 50px"></textarea>
+        <label style="margin-top: 10px; display: block">Web Activity:</label>
+        <textarea id="fileName2" style="height: 50px"></textarea>
+        <label style="margin-top: 10px; display: block">Content Folder:</label>
+        <textarea id="fileName3" style="height: 50px"></textarea>
+        <label style="margin-top: 10px; display: block">Activity Folder:</label>
+        <textarea id="fileName4" style="height: 50px"></textarea>
+        <label style="margin-top: 10px; display: block">Description:</label>
+        <textarea id="description" style="height: 120px"></textarea>
+        <button class="secondary" onclick="copyToClipboard()">
+          📋 Copy Code
+        </button>
+        <div id="visualPreview" class="preview-box"></div>
+      </div>
+    </div>
+
+    <script>
+      // ======================================================
+      // 1. LA PLANTILLA MAESTRA (SÓLO UNA VEZ)
+      // ======================================================
+      // Note how we use new placeholders that start with T_ for translatable texts
+      const masterHTML = `
+<section>
+  <style>
+    .CMC__Espot__Bg-Color--blue {
+      background-color: var(
+        --cat-theme-color-background-utility-information-strong
+      );
+    }
+    .CMC__Espot__Ribbon_Height {
+      height: 44px !important;
+    }
+    .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon-Mid--section {
+      max-width: 968px;
+    }
+    .CMC__Espot__Ribbon_Container .cat-u-theme-typography-display-sm {
+      line-height: calc(var(--cat-line-height-20) * 16 / 20) !important;
+    }
+
+    .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon_CTA-link {
+      color: var(--cat-color-neutral-white) !important;
+      line-height: calc(var(--cat-line-height-20) * 17 / 20) !important;
+    }
+    .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon_CTA-link:hover,
+    .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon_CTA-link:active,
+    .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon_CTA-link:focus {
+      color: var(--cat-color-brand-blue-20) !important;
+    }
+
+    .CMC__Espot__Ribbon_CTA-Button {
+      height: 32px;
+      border-radius: var(--cat-border-radius-md);
+      border: var(--cat-border-width-sm) solid
+        var(--cat-theme-color-button-background);
+      color: var(--cat-theme-color-content-knockout);
+      max-width: 106px !important;
+    }
+    .CMC__Espot__Ribbon_CTA-Button:hover {
+      background-color: var(--cat-color-brand-blue-60);
+    }
+    .CMC__Espot__Ribbon_CTA-Button:active {
+      background-color: var(--cat-color-brand-blue-70);
+    }
+
+    @media only screen and (max-width: 1244.98px) {
+      .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon-Mid--section {
+        width: 73% !important;
+      }
+    }
+    @media only screen and (max-width: 959.98px) {
+      .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon-Mid--section {
+        width: 90% !important;
+      }
+    }
+    @media only screen and (max-width: 767.98px) {
+      .CMC__Espot__Ribbon_Container .cat-u-theme-typography-display-sm,
+      .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon_CTA-link {
+        font-size: var(--cat-font-size-12) !important;
+        line-height: var(--cat-line-height-16) !important;
+      }
+      .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon-Mid--section {
+        width: 86% !important;
+      }
+    }
+    @media only screen and (max-width: 575.98px) {
+      .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon-Mid--section {
+        width: 78% !important;
+      }
+      .CMC__Espot__Ribbon_Container .cat-u-theme-typography-display-sm,
+      .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon_CTA-link,
+      .CMC__Espot__Ribbon_CTA-Button {
+        font-family: var(--cat-font-family-primary) !important;
+        font-size: var(--cat-font-size-12) !important;
+        line-height: var(--cat-line-height-16) !important;
+        font-weight: var(--cat-font-weight-regular) !important;
+      }
+      .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon_CTA-Button {
+        max-width: 80px !important;
+      }
+    }
+  </style>
+
+  <div
+    class="CMC__Espot__Ribbon_Container CMC__Espot__Category_Promo_Percent_link_Btn w-100 CMC__Espot__Ribbon_Height CMC__Espot__Bg-Color--blue d-flex justify-content-center align-items-center"
+  >
+    <div
+      class="CMC__Espot__Ribbon-Mid--section d-flex justify-content-center align-items-center w-100"
+    >
+      <cat-icon-tag
+        class="d-none d-sm-block cat-icon"
+        color="knockout"
+        size="lg"
+      ></cat-icon-tag>
+      <p
+        class="cat-u-theme-typography-display-sm CMC__Espot__Text-Color--white text-center px-2 mb-0"
+      >
+        [T_OFFER][T_CODE_TEXT]
+        <cat-text-link
+          size="sm"
+          target="_blank"
+          inverted
+          class="ms-1"
+          href="[ENTER_EXTERNAL_URL]"
+          ><span
+            class="CMC__Espot__Ribbon_CTA-link d-flex justify-content-center align-items-center text-decoration-underline m-0"
+            >[T_DETAILS]</span
+          ></cat-text-link
+        >
+      </p>
+      <a
+        target="_blank"
+        class="CMC__Espot__Ribbon_CTA-Button cat-u-theme-typography-body-sm d-flex justify-content-center align-items-center px-1 px-md-2 w-100 text-decoration-none"
+        href="[fullPathHomeURL]/[ENTER_CATEGORY_URL]"
+        aria-label="[T_CTA]"
+        >[T_CTA]</a
+      >
+    </div>
+  </div>
+</section>`;
+
+      // ======================================================
+      // 2. BASE DE DATOS DE IDIOMAS (AQUÍ AGREGAS TUS 30)
+      // ======================================================
+      const translations = {
+        en: {
+          name: "🇺🇸 English",
+          T_DETAILS: "Details",
+          T_CTA: "Shop Now",
+          T_OFFER_CATEGORY: "[ENTER_NUMBER]% Off Selected [ENTER_CATEGORY]",
+          T_OFFER_SITEWIDE: "[ENTER_NUMBER]% Off Your Next Order",
+          T_CODE_TEXT: " | Code: [PROMO_CODE].",
+        },
+        es: {
+          name: "🇪🇸 Español",
+          T_DETAILS: "Detalles",
+          T_CTA: "Comprar ahora",
+          T_OFFER_CATEGORY:
+            "[ENTER_NUMBER]% de descuento en [ENTER_CATEGORY] seleccionados",
+          T_OFFER_SITEWIDE: "[ENTER_NUMBER]% de descuento en tu próxima orden",
+          T_CODE_TEXT: " | Código: [PROMO_CODE].",
+        },
+        pt: {
+          name: "🇧🇷 Português",
+          T_DETAILS: "Detalhes",
+          T_CTA: "Comprar agora",
+          T_OFFER_CATEGORY:
+            "[ENTER_NUMBER]% de desconto em [ENTER_CATEGORY] selecionados",
+          T_OFFER_SITEWIDE: "[ENTER_NUMBER]% de desconto no seu próximo pedido",
+          T_CODE_TEXT: " | Cupom: [PROMO_CODE].",
+        },
+        fr: {
+          name: "🇫🇷 Français",
+          T_DETAILS: "Details",
+          T_CTA: "Acheter maintenant",
+          T_OFFER_CATEGORY:
+            "[ENTER_NUMBER]% de réduction sur [ENTER_CATEGORY] sélectionné",
+          T_OFFER_SITEWIDE:
+            "[ENTER_NUMBER]% de réduction sur votre prochaine commande",
+          T_CODE_TEXT: " | Code : [PROMO_CODE].",
+        },
+        de: {
+          name: "🇩🇪 Deutsch",
+          T_DETAILS: "Details",
+          T_CTA: "Jetzt kaufen",
+          T_OFFER_CATEGORY:
+            "[ENTER_NUMBER]% Rabatt auf ausgewählte [ENTER_CATEGORY]",
+          T_OFFER_SITEWIDE:
+            "[ENTER_NUMBER]% Rabatt auf Ihre nächste Bestellung",
+          T_CODE_TEXT: " | Code: [PROMO_CODE].",
+        },
+        it: {
+          name: "🇮🇹 Italiano",
+          T_DETAILS: "Dettagli",
+          T_CTA: "Acquista ora",
+          T_OFFER_CATEGORY:
+            "[ENTER_NUMBER]% di sconto su [ENTER_CATEGORY] selezionati",
+          T_OFFER_SITEWIDE: "[ENTER_NUMBER]% di sconto sul tuo prossimo ordine",
+          T_CODE_TEXT: " | Codice: [PROMO_CODE].",
+        },
+        bn: {
+          name: "🇧🇩 Bengali",
+          T_DETAILS: "বিস্তারিত",
+          T_CTA: "এখন কিনুন",
+          T_OFFER_CATEGORY: "বাছাইকৃত [ENTER_CATEGORY]-এ [ENTER_NUMBER]% ছাড়",
+          T_OFFER_SITEWIDE: "আপনার পরবর্তী অর্ডারে [ENTER_NUMBER]% ছাড়",
+          T_CODE_TEXT: " | কোড: [PROMO_CODE].",
+        },
+        ko: {
+          name: "🇰🇷 Korean",
+          T_DETAILS: "자세히 보기",
+          T_CTA: "지금 쇼핑하기",
+          T_OFFER_CATEGORY: "일부 [ENTER_CATEGORY] [ENTER_NUMBER]% 할인",
+          T_OFFER_SITEWIDE: "다음 주문 시 [ENTER_NUMBER]% 할인",
+          T_CODE_TEXT: " | 코드: [PROMO_CODE].",
+        },
+        // ... Simplemente sigue agregando idiomas aquí ...
+      };
+
+      // ======================================================
+      // 3. INICIALIZACIÓN Y LÓGICA
+      // ======================================================
+
+      // Llenar el selector automáticamente al cargar la página
+      const langSelect = document.getElementById("language");
+      for (let key in translations) {
+        let option = document.createElement("option");
+        option.value = key;
+        option.textContent = translations[key].name;
+        langSelect.appendChild(option);
+      }
+
+      function toggleFields() {
+        const promoType = document.getElementById("promoType").value;
+        const categoryGroup = document.getElementById("categoryGroup");
+        const ctaUrlLabel = document.getElementById("ctaUrlLabel");
+
+        if (promoType === "sitewide") {
+          categoryGroup.style.display = "none";
+          ctaUrlLabel.textContent = "CTA URL (Optional):";
+        } else {
+          categoryGroup.style.display = "block";
+          ctaUrlLabel.textContent = "CTA URL:";
+        }
+      }
+
+      function generateCode() {
+        // Reset errors
+        document
+          .querySelectorAll(".input-error")
+          .forEach((el) => el.classList.remove("input-error"));
+
+        const langKey = document.getElementById("language").value;
+
+        const categoryEl = document.getElementById("category");
+        const codeEl = document.getElementById("code");
+        const percentageEl = document.getElementById("percentage");
+        const externalUrlEl = document.getElementById("externalUrl");
+        const ctaUrlEl = document.getElementById("ctaUrl");
+        const startDateEl = document.getElementById("startDate");
+        const endDateEl = document.getElementById("endDate");
+        const dealerNameEl = document.getElementById("dealerName");
+        const promoType = document.getElementById("promoType").value;
+
+        const category = categoryEl.value;
+        const code = codeEl.value;
+        const percentage = percentageEl.value;
+        const externalUrl = externalUrlEl.value;
+        const ctaUrl = ctaUrlEl.value;
+        const startDate = startDateEl.value;
+        const endDate = endDateEl.value;
+        const startTime = document.getElementById("startTime").value;
+        const endTime = document.getElementById("endTime").value;
+        const dealerName = dealerNameEl.value;
+        const ticketNumber = document.getElementById("ticketNumber").value;
+        const target = document.getElementById("target").value;
+
+        let hasError = false;
+        const validate = (element, condition) => {
+          if (!condition) {
+            element.classList.add("input-error");
+            hasError = true;
+          }
+        };
+
+        validate(percentageEl, percentage);
+        validate(externalUrlEl, externalUrl);
+        validate(startDateEl, startDate);
+        validate(endDateEl, endDate);
+        validate(dealerNameEl, dealerName);
+
+        if (promoType === "category") {
+          validate(categoryEl, category);
+          validate(ctaUrlEl, ctaUrl);
+        }
+
+        if (hasError) {
+          alert("Missing data: Please complete all required fields");
+          return;
+        }
+
+        // Load master template
+        let finalCode = masterHTML;
+
+        // Replace texts from selected language
+        const selectedTexts = translations[langKey];
+
+        // Determine which promotion text to use
+        let offerText =
+          promoType === "sitewide"
+            ? selectedTexts.T_OFFER_SITEWIDE
+            : selectedTexts.T_OFFER_CATEGORY;
+
+        // Manually replace [T_OFFER] first
+        finalCode = finalCode.replace("[T_OFFER]", offerText);
+
+        // Replace each key from the selected language
+        for (let key in selectedTexts) {
+          if (key !== "name") {
+            // If no code and the key is T_CODE_TEXT, replace with empty string
+            if (key === "T_CODE_TEXT" && !code) {
+              let regex = new RegExp("\\[" + key + "\\]", "g");
+              finalCode = finalCode.replace(regex, "");
+              continue;
+            }
+
+            let regex = new RegExp("\\[" + key + "\\]", "g");
+            finalCode = finalCode.replace(regex, selectedTexts[key]);
+          }
+        }
+
+        // Replace variables
+        finalCode = finalCode
+          .replace(/\[ENTER_NUMBER\]/g, percentage)
+          .replace(/\[ENTER_CATEGORY\]/g, category);
+
+        if (code) {
+          finalCode = finalCode.replace(/\[PROMO_CODE\]/g, code);
+        }
+
+        if (ctaUrl) {
+          finalCode = finalCode.replace(/\[ENTER_CATEGORY_URL\]/g, ctaUrl);
+        } else {
+          const buttonRegex =
+            /<a\s+target="_blank"\s+class="CMC__Espot__Ribbon_CTA-Button[\s\S]*?<\/a>/;
+          finalCode = finalCode.replace(buttonRegex, "");
+        }
+
+        finalCode = finalCode.replace(/\[ENTER_EXTERNAL_URL\]/g, externalUrl);
+
+        // Generate file name
+        const formatDate = (dateStr) => {
+          if (!dateStr) return "";
+          const [year, month, day] = dateStr.split("-");
+          return `${month}${day}${year}`;
+        };
+
+        const formattedStartDate = formatDate(startDate);
+        const formattedEndDate = formatDate(endDate);
+
+        const linkType =
+          !ctaUrl && promoType === "sitewide"
+            ? "percentofftclink"
+            : "percentofflinkbutton";
+        const commonSuffix = `${percentage}${linkType}${
+          promoType === "category" ? ctaUrl : ""
+        }`;
+
+        const fileName = `CMC_ESPOT_PCC_CATSAS_RIBBON_TOP | ${formattedStartDate}-${formattedEndDate} | ${commonSuffix} | ${dealerName}`;
+
+        const fileName2 = `${formattedStartDate}-${formattedEndDate}_CMC_ESPOT_PCC_CATSAS_RIBBON_TOP_${commonSuffix}`;
+        const fileName3 = `${formattedStartDate}-${formattedEndDate}_${commonSuffix}_Content_Folder`;
+        const fileName4 = `${formattedStartDate}-${formattedEndDate}_${commonSuffix}_Activity_Folder`;
+
+        const description = `Ticket Number: ${ticketNumber}
+Espot Name: CMC_ESPOT_PCC_CATSAS_RIBBON_TOP
+Target: ${target}
+Start Date (CST): ${startDate} ${startTime ? startTime : "00:00"}
+End Date (CST): ${endDate} ${endTime ? endTime : "00:00"}`;
+
+        // Mostrar
+        document.getElementById("results").style.display = "block";
+        document.getElementById("finalHtml").value = finalCode;
+        document.getElementById("fileName").value = fileName;
+        document.getElementById("fileName2").value = fileName2;
+        document.getElementById("fileName3").value = fileName3;
+        document.getElementById("fileName4").value = fileName4;
+        document.getElementById("description").value = description;
+        document.getElementById("visualPreview").innerHTML = finalCode;
+      }
+
+      function copyToClipboard() {
+        const copyText = document.getElementById("finalHtml");
+        copyText.select();
+        document.execCommand("copy");
+      }
+
+      // Initialize fields
+      toggleFields();
+    </script>
+  </body>
+</html>
