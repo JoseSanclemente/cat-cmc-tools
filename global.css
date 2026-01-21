@@ -1,0 +1,58 @@
+:root {
+  --primary-color: #ffcd11;
+  --primary-hover: #e6b800;
+  --secondary-color: #000000;
+  --secondary-hover: #333333;
+  --bg-color: #f4f4f9;
+  --container-bg: #ffffff;
+  --text-color: #333333;
+  --text-muted: #555555;
+  --border-color: #dddddd;
+  --border-light: #eeeeee;
+  --border-dashed: #cccccc;
+  --input-bg: #f8f9fa;
+  --error-color: #dc3545;
+  --error-bg: #fff8f8;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Host Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  background-color: var(--bg-color);
+  padding: 40px;
+}
+
+.header-logo {
+  background-image: url("https://brandlogos.net/wp-content/uploads/2022/09/cat-logo_brandlogos.net_tl5q3-512x512.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 60px;
+  width: 60px;
+  margin-right: 16px;
+}
+
+.header-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.menu-link {
+  text-decoration: none;
+}
+
+.card {
+  min-height: 200px;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}

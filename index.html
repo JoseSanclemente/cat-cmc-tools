@@ -4,29 +4,53 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CAT Tools</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap");
+      @import url("./global.css");
+    </style>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
-    <header>
-      <h1>
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Caterpillar_logo.svg"
-          alt="Caterpillar Logo"
-          style="height: 40px; vertical-align: middle; margin-right: 10px"
-        />
-        CMC Utilities
-      </h1>
+    <header class="d-flex align-items-center">
+      <div class="header-logo"></div>
+      <h1 class="header-title">CMC Utilities</h1>
     </header>
-    <main>
-      <ul>
-        <li>
-          <a href="pages/css_remover.html">CSS Remover</a>
-        </li>
-        <li>
-          <a href="pages/streamlined_banners_generator.html"
-            >Streamlined Banner Generator</a
-          >
-        </li>
-      </ul>
+    <main class="d-flex gap-2 mt-5">
+      <a class="d-block w-50 menu-link" href="pages/css_remover.html">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">CSS Remover</h5>
+            <p class="card-text">
+              Remove CSS from HTML files to hygiene the code for the XML
+              translation portal.
+            </p>
+          </div>
+        </div>
+      </a>
+
+      <a
+        class="d-block w-50 menu-link"
+        href="pages/streamlined_banners_generator.html"
+      >
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Streamlined Banner Generator</h5>
+            <p class="card-text">
+              Generate Category and Sitewide promotions banners.
+            </p>
+          </div>
+        </div>
+      </a>
     </main>
     <footer></footer>
   </body>
