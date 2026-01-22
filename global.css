@@ -25,23 +25,8 @@ body {
   font-family: "Host Grotesk", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
-  background-color: var(--bg-color);
+  background-color: var(--bg-color) !important;
   padding: 40px;
-}
-
-.header-logo {
-  background-image: url("https://brandlogos.net/wp-content/uploads/2022/09/cat-logo_brandlogos.net_tl5q3-512x512.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  height: 60px;
-  width: 60px;
-  margin-right: 16px;
-}
-
-.header-title {
-  margin: 0;
-  font-size: 2rem;
-  font-weight: bold;
 }
 
 .menu-link {

@@ -3,11 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Streamlined Banner Generator</title>
+
+    <!-- Global font & styles -->
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap");
       @import url("../global.css");
     </style>
+
+    <!-- Bootstrap -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -19,10 +24,15 @@
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
       crossorigin="anonymous"
     ></script>
+    <!-- End Bootstrap -->
+
+    <!-- Components -->
+    <script src="../components/Header.js"></script>
+    <!-- End Components -->
+
     <style>
       .container {
         max-width: 800px;
-        margin: 0 auto;
         background: var(--container-bg);
         padding: 30px;
         border-radius: 8px;
@@ -106,16 +116,8 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <h2>
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Caterpillar_logo.svg"
-          alt="Caterpillar Logo"
-          style="height: 40px; vertical-align: middle; margin-right: 10px"
-        />
-        Streamlined Banner Generator
-      </h2>
-
+    <header-component title="Streamlined Banner Generator"></header-component>
+    <div class="container mt-5">
       <div class="form-group">
         <label for="language">Select Language:</label>
         <select id="language"></select>
