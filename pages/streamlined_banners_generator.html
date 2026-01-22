@@ -9,7 +9,8 @@
     <!-- Global font & styles -->
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap");
-      @import url("../global.css");
+      @import url("../styles/global.css");
+      @import url("../styles/pages/streamlined_banners_generator.css");
     </style>
 
     <!-- Bootstrap -->
@@ -29,95 +30,10 @@
     <!-- Components -->
     <script src="../components/Header.js"></script>
     <!-- End Components -->
-
-    <style>
-      .container {
-        max-width: 800px;
-        background: var(--container-bg);
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-      h2 {
-        margin-top: 0;
-        margin-top: 0;
-        color: var(--text-color);
-        border-bottom: 2px solid var(--primary-color);
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-      }
-      .form-group {
-        margin-bottom: 15px;
-      }
-      label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: var(--text-muted);
-      }
-      input,
-      select {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        font-size: 16px;
-        box-sizing: border-box;
-      }
-      button {
-        background: var(--primary-color);
-        color: var(--secondary-color);
-        font-weight: bold;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-        width: 100%;
-        margin-top: 10px;
-        transition: background 0.2s;
-      }
-      button:hover {
-        background: var(--primary-hover);
-      }
-      button.secondary {
-        background: var(--secondary-color);
-        color: var(--container-bg);
-        margin-top: 10px;
-      }
-      button.secondary:hover {
-        background: var(--secondary-hover);
-      }
-      .output-section {
-        margin-top: 30px;
-        border-top: 2px solid var(--border-light);
-        padding-top: 20px;
-      }
-      textarea {
-        width: 100%;
-        height: 150px;
-        font-family: monospace;
-        padding: 10px;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        background: var(--input-bg);
-        color: var(--text-color);
-      }
-      .preview-box {
-        border: 1px dashed var(--border-dashed);
-        padding: 20px;
-        margin-top: 15px;
-        background: var(--container-bg);
-      }
-      .input-error {
-        border: 2px solid var(--error-color) !important;
-        background-color: var(--error-bg);
-      }
-    </style>
   </head>
   <body>
     <header-component title="Streamlined Banner Generator"></header-component>
-    <div class="container mt-5">
+    <div class="form-container mt-5">
       <div class="form-group">
         <label for="language">Select Language:</label>
         <select id="language"></select>
@@ -209,18 +125,34 @@
       <button onclick="generateCode()">Generate HTML</button>
 
       <div class="output-section" id="results" style="display: none">
-        <label>Final HTML Code:</label>
-        <textarea id="finalHtml"></textarea>
-        <label style="margin-top: 10px; display: block">Content File:</label>
-        <textarea id="fileName" style="height: 50px"></textarea>
-        <label style="margin-top: 10px; display: block">Web Activity:</label>
-        <textarea id="fileName2" style="height: 50px"></textarea>
-        <label style="margin-top: 10px; display: block">Content Folder:</label>
-        <textarea id="fileName3" style="height: 50px"></textarea>
-        <label style="margin-top: 10px; display: block">Activity Folder:</label>
-        <textarea id="fileName4" style="height: 50px"></textarea>
-        <label style="margin-top: 10px; display: block">Description:</label>
-        <textarea id="description" style="height: 120px"></textarea>
+        <label for="finalHtml">Final HTML Code:</label>
+        <textarea id="finalHtml" readonly></textarea>
+
+        <label for="contentFile" style="margin-top: 10px; display: block"
+          >Content File:</label
+        >
+        <textarea id="contentFile" readonly style="height: 50px"></textarea>
+
+        <label for="webActivity" style="margin-top: 10px; display: block"
+          >Web Activity:</label
+        >
+        <textarea id="webActivity" readonly style="height: 50px"></textarea>
+
+        <label for="contentFolder" style="margin-top: 10px; display: block"
+          >Content Folder:</label
+        >
+        <textarea id="contentFolder" readonly style="height: 50px"></textarea>
+
+        <label for="activityFolder" style="margin-top: 10px; display: block"
+          >Activity Folder:</label
+        >
+        <textarea id="activityFolder" readonly style="height: 50px"></textarea>
+
+        <label for="description" style="margin-top: 10px; display: block"
+          >Description:</label
+        >
+        <textarea id="description" readonly style="height: 120px"></textarea>
+
         <button class="secondary" onclick="copyToClipboard()">
           📋 Copy Code
         </button>
@@ -230,7 +162,7 @@
 
     <script>
       // ======================================================
-      // 1. LA PLANTILLA MAESTRA (SÓLO UNA VEZ)
+      // 1. Banner template
       // ======================================================
       // Note how we use new placeholders that start with T_ for translatable texts
       const masterHTML = `
@@ -353,7 +285,7 @@
 </section>`;
 
       // ======================================================
-      // 2. BASE DE DATOS DE IDIOMAS (AQUÍ AGREGAS TUS 30)
+      // 2. TRANSLATIONS
       // ======================================================
       const translations = {
         en: {
@@ -427,14 +359,14 @@
           T_OFFER_SITEWIDE: "다음 주문 시 [ENTER_NUMBER]% 할인",
           T_CODE_TEXT: " | 코드: [PROMO_CODE].",
         },
-        // ... Simplemente sigue agregando idiomas aquí ...
+        // ... Keep adding languages ...
       };
 
       // ======================================================
-      // 3. INICIALIZACIÓN Y LÓGICA
+      // 3. LOGIC
       // ======================================================
 
-      // Llenar el selector automáticamente al cargar la página
+      // Automatically fill the selector when the page loads
       const langSelect = document.getElementById("language");
       for (let key in translations) {
         let option = document.createElement("option");
@@ -579,11 +511,11 @@
           promoType === "category" ? ctaUrl : ""
         }`;
 
-        const fileName = `CMC_ESPOT_PCC_CATSAS_RIBBON_TOP | ${formattedStartDate}-${formattedEndDate} | ${commonSuffix} | ${dealerName}`;
+        const contentFile = `CMC_ESPOT_PCC_CATSAS_RIBBON_TOP | ${formattedStartDate}-${formattedEndDate} | ${commonSuffix} | ${dealerName}`;
 
-        const fileName2 = `${formattedStartDate}-${formattedEndDate}_CMC_ESPOT_PCC_CATSAS_RIBBON_TOP_${commonSuffix}`;
-        const fileName3 = `${formattedStartDate}-${formattedEndDate}_${commonSuffix}_Content_Folder`;
-        const fileName4 = `${formattedStartDate}-${formattedEndDate}_${commonSuffix}_Activity_Folder`;
+        const webActivity = `${formattedStartDate}-${formattedEndDate}_CMC_ESPOT_PCC_CATSAS_RIBBON_TOP_${commonSuffix}`;
+        const contentFolder = `${formattedStartDate}-${formattedEndDate}_${commonSuffix}_Content_Folder`;
+        const activityFolder = `${formattedStartDate}-${formattedEndDate}_${commonSuffix}_Activity_Folder`;
 
         const description = `Ticket Number: ${ticketNumber}
 Espot Name: CMC_ESPOT_PCC_CATSAS_RIBBON_TOP
@@ -591,13 +523,13 @@ Target: ${target}
 Start Date (CST): ${startDate} ${startTime ? startTime : "00:00"}
 End Date (CST): ${endDate} ${endTime ? endTime : "00:00"}`;
 
-        // Mostrar
+        // Show results
         document.getElementById("results").style.display = "block";
         document.getElementById("finalHtml").value = finalCode;
-        document.getElementById("fileName").value = fileName;
-        document.getElementById("fileName2").value = fileName2;
-        document.getElementById("fileName3").value = fileName3;
-        document.getElementById("fileName4").value = fileName4;
+        document.getElementById("contentFile").value = contentFile;
+        document.getElementById("webActivity").value = webActivity;
+        document.getElementById("contentFolder").value = contentFolder;
+        document.getElementById("activityFolder").value = activityFolder;
         document.getElementById("description").value = description;
         document.getElementById("visualPreview").innerHTML = finalCode;
       }
