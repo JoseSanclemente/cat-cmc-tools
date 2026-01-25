@@ -1,29 +1,42 @@
 class Header extends HTMLElement {
   constructor() {
     super();
+    this.attachShadow({ mode: "open" });
   }
 
   static get observedAttributes() {
-    return ["title", "backButton"];
+    return ["title", "back-button"];
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback(_, oldValue, newValue) {
     if (oldValue === newValue) return;
-    this[name] = newValue;
+    this.render();
   }
 
   connectedCallback() {
-    const shadowDOM = this.attachShadow({ mode: "open" });
+    this.render();
+  }
 
-    const component = document.querySelector("header-component");
-    const isBackButton = component.hasAttribute("backButton");
+  get title() {
+    return this.getAttribute("title") || "";
+  }
 
-    shadowDOM.innerHTML = `
+  get showBackButton() {
+    return this.hasAttribute("back-button");
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
     <style>
+      :host {
+        display: block;
+        width: 100%;
+      }
       header {
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 10px 0;
       }
         
       .header-logo {
@@ -39,18 +52,23 @@ class Header extends HTMLElement {
         margin: 0;
         font-size: 2rem;
         font-weight: bold;
+        color: #000;
       }
 
       .header-back {
         display: flex;
         align-items: center;
         justify-content: center;
+        text-decoration: none;
+        color: inherit;
+        position: absolute;
+        left: 20px;
       }
     </style>
     <header>
       ${
-        isBackButton
-          ? `<a class="header-back" href="../index.html">
+        this.showBackButton
+          ? `<a class="header-back" href="../index.html" aria-label="Go back">
         <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#000000"><path d="M560.67-240 320-480.67l240.67-240.66L608-674 414.67-480.67 608-287.33 560.67-240Z"/></svg>
       </a>`
           : ""
