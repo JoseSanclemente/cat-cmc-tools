@@ -86,7 +86,12 @@
       <div class="form-group">
         <label>Start Date & Time:</label>
         <div style="display: flex; gap: 10px">
-          <input type="date" id="startDate" style="flex: 1" />
+          <input
+            type="date"
+            id="startDate"
+            style="flex: 1"
+            onchange="setInitialStartTime()"
+          />
           <input type="time" id="startTime" style="flex: 1" />
         </div>
       </div>
@@ -94,7 +99,12 @@
       <div class="form-group">
         <label>End Date & Time:</label>
         <div style="display: flex; gap: 10px">
-          <input type="date" id="endDate" style="flex: 1" />
+          <input
+            type="date"
+            id="endDate"
+            style="flex: 1"
+            onchange="setInitialEndTime()"
+          />
           <input type="time" id="endTime" style="flex: 1" />
         </div>
       </div>
@@ -164,10 +174,7 @@
     </div>
 
     <script>
-      // ======================================================
-      // 1. Banner template
-      // ======================================================
-      // Note how we use new placeholders that start with T_ for translatable texts
+      // Banner template
       const masterHTML = `
 <section>
   <style>
@@ -287,9 +294,6 @@
   </div>
 </section>`;
 
-      // ======================================================
-      // 2. TRANSLATIONS
-      // ======================================================
       const translations = {
         en: {
           name: "🇺🇸 English",
@@ -365,10 +369,6 @@
         // ... Keep adding languages ...
       };
 
-      // ======================================================
-      // 3. LOGIC
-      // ======================================================
-
       // Automatically fill the selector when the page loads
       const langSelect = document.getElementById("language");
       for (let key in translations) {
@@ -392,6 +392,16 @@
         }
       }
 
+      function setInitialStartTime() {
+        const startTimeEl = document.getElementById("startTime");
+        startTimeEl.value = "00:00";
+      }
+
+      function setInitialEndTime() {
+        const endTimeEl = document.getElementById("endTime");
+        endTimeEl.value = "23:59";
+      }
+
       function generateCode() {
         // Reset errors
         document
@@ -406,9 +416,13 @@
         const externalUrlEl = document.getElementById("externalUrl");
         const ctaUrlEl = document.getElementById("ctaUrl");
         const startDateEl = document.getElementById("startDate");
+        const startTimeEl = document.getElementById("startTime");
         const endDateEl = document.getElementById("endDate");
+        const endTimeEl = document.getElementById("endTime");
         const dealerNameEl = document.getElementById("dealerName");
-        const promoType = document.getElementById("promoType").value;
+        const promoTypeEl = document.getElementById("promoType");
+        const ticketNumberEl = document.getElementById("ticketNumber");
+        const targetEl = document.getElementById("target");
 
         const category = categoryEl.value;
         const code = codeEl.value;
@@ -417,11 +431,12 @@
         const ctaUrl = ctaUrlEl.value;
         const startDate = startDateEl.value;
         const endDate = endDateEl.value;
-        const startTime = document.getElementById("startTime").value;
-        const endTime = document.getElementById("endTime").value;
+        const startTime = startTimeEl.value;
+        const endTime = endTimeEl.value;
         const dealerName = dealerNameEl.value;
-        const ticketNumber = document.getElementById("ticketNumber").value;
-        const target = document.getElementById("target").value;
+        const ticketNumber = ticketNumberEl.value;
+        const target = targetEl.value;
+        const promoType = promoTypeEl.value;
 
         let hasError = false;
         const validate = (element, condition) => {
@@ -434,8 +449,12 @@
         validate(percentageEl, percentage);
         validate(externalUrlEl, externalUrl);
         validate(startDateEl, startDate);
+        validate(startTimeEl, startTime);
         validate(endDateEl, endDate);
+        validate(endTimeEl, endTime);
         validate(dealerNameEl, dealerName);
+        validate(promoTypeEl, promoType);
+        validate(ticketNumberEl, ticketNumber);
 
         if (promoType === "category") {
           validate(categoryEl, category);
@@ -450,19 +469,17 @@
         // Load master template
         let finalCode = masterHTML;
 
-        // Replace texts from selected language
+        // Get selected language texts
         const selectedTexts = translations[langKey];
 
-        // Determine which promotion text to use
         let offerText =
           promoType === "sitewide"
             ? selectedTexts.T_OFFER_SITEWIDE
             : selectedTexts.T_OFFER_CATEGORY;
 
-        // Manually replace [T_OFFER] first
         finalCode = finalCode.replace("[T_OFFER]", offerText);
 
-        // Replace each key from the selected language
+        // Replace the initial keys from the master template with the selected language texts
         for (let key in selectedTexts) {
           if (key !== "name") {
             // If no code and the key is T_CODE_TEXT, replace with empty string
@@ -477,7 +494,7 @@
           }
         }
 
-        // Replace variables
+        // Replace the selected language keys with the variables
         finalCode = finalCode
           .replace(/\[ENTER_NUMBER\]/g, percentage)
           .replace(/\[ENTER_CATEGORY\]/g, category);
@@ -523,8 +540,8 @@
         const description = `Ticket Number: ${ticketNumber}
 Espot Name: CMC_ESPOT_PCC_CATSAS_RIBBON_TOP
 Target: ${target}
-Start Date (CST): ${startDate} ${startTime ? startTime : "00:00"}
-End Date (CST): ${endDate} ${endTime ? endTime : "00:00"}`;
+Start Date (CST): ${startDate} ${startTime}
+End Date (CST): ${endDate} ${endTime}`;
 
         // Show results
         document.getElementById("results").style.display = "block";
