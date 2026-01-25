@@ -29,6 +29,7 @@
 
     <!-- Components -->
     <script src="../components/Header.js"></script>
+    <script src="../components/Button.js"></script>
     <!-- End Components -->
   </head>
   <body>
@@ -75,48 +76,38 @@
       </div>
 
       <div class="form-group">
-        <label>Terms & Conditions URL:</label>
+        <label>Terms & Conditions External URL:</label>
         <input
           type="text"
           id="externalUrl"
-          placeholder="Ex: https://parts.cat.com/es/toromont/promo-yellow-thursday"
+          placeholder="Ex: https://catsas.com/en/term-and-conditions"
         />
       </div>
 
       <div class="form-group">
         <label>Start Date & Time:</label>
-        <div style="display: flex; gap: 10px">
-          <input
-            type="date"
-            id="startDate"
-            style="flex: 1"
-            onchange="setInitialStartTime()"
-          />
-          <input type="time" id="startTime" style="flex: 1" />
+        <div class="d-flex gap-2">
+          <input type="date" id="startDate" onchange="setInitialStartTime()" />
+          <input type="time" id="startTime" />
         </div>
       </div>
 
       <div class="form-group">
         <label>End Date & Time:</label>
-        <div style="display: flex; gap: 10px">
-          <input
-            type="date"
-            id="endDate"
-            style="flex: 1"
-            onchange="setInitialEndTime()"
-          />
-          <input type="time" id="endTime" style="flex: 1" />
+        <div class="d-flex gap-2">
+          <input type="date" id="endDate" onchange="setInitialEndTime()" />
+          <input type="time" id="endTime" />
         </div>
       </div>
 
       <div class="form-group">
         <label>Dealer Name:</label>
-        <input type="text" id="dealerName" placeholder="Ex: DealerName" />
+        <input type="text" id="dealerName" placeholder="Ex: CATSAS" />
       </div>
 
       <div class="form-group">
         <label>Ticket Number:</label>
-        <input type="text" id="ticketNumber" placeholder="Ex: 12345" />
+        <input type="text" id="ticketNumber" placeholder="Ex: SCTASK12345" />
       </div>
 
       <div class="form-group">
@@ -135,40 +126,35 @@
         </select>
       </div>
 
-      <button onclick="generateCode()">Generate HTML</button>
+      <button-component
+        label="Generate HTML"
+        onclick="generateCode()"
+      ></button-component>
 
       <div class="output-section" id="results" style="display: none">
         <label for="finalHtml">Final HTML Code:</label>
-        <textarea id="finalHtml" readonly></textarea>
+        <textarea id="finalHtml" readonly rows="10"></textarea>
 
-        <label for="contentFile" style="margin-top: 10px; display: block"
-          >Content File:</label
-        >
-        <textarea id="contentFile" readonly style="height: 50px"></textarea>
+        <label for="contentFile" class="mt-2">Content File:</label>
+        <textarea id="contentFile" readonly rows="2"></textarea>
 
-        <label for="webActivity" style="margin-top: 10px; display: block"
-          >Web Activity:</label
-        >
-        <textarea id="webActivity" readonly style="height: 50px"></textarea>
+        <label for="webActivity" class="mt-2">Web Activity:</label>
+        <textarea id="webActivity" readonly rows="2"></textarea>
 
-        <label for="contentFolder" style="margin-top: 10px; display: block"
-          >Content Folder:</label
-        >
-        <textarea id="contentFolder" readonly style="height: 50px"></textarea>
+        <label for="contentFolder" class="mt-2">Content Folder:</label>
+        <textarea id="contentFolder" readonly rows="2"></textarea>
 
-        <label for="activityFolder" style="margin-top: 10px; display: block"
-          >Activity Folder:</label
-        >
-        <textarea id="activityFolder" readonly style="height: 50px"></textarea>
+        <label for="activityFolder" class="mt-2">Activity Folder:</label>
+        <textarea id="activityFolder" readonly rows="2"></textarea>
 
-        <label for="description" style="margin-top: 10px; display: block"
-          >Description:</label
-        >
-        <textarea id="description" readonly style="height: 120px"></textarea>
+        <label for="description" class="mt-2">Description:</label>
+        <textarea id="description" readonly rows="5"></textarea>
 
-        <button class="secondary" onclick="copyToClipboard()">
-          📋 Copy Code
-        </button>
+        <button-component
+          type="secondary"
+          onclick="copyToClipboard()"
+          label="Copy Code"
+        ></button-component>
         <div id="visualPreview" class="preview-box"></div>
       </div>
     </div>

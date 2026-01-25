@@ -2,10 +2,11 @@
   --primary-color: #ffcd11;
   --primary-hover: #e6b800;
   --secondary-color: #000000;
-  --secondary-hover: #333333;
+  --secondary-hover: #494949;
   --bg-color: #f4f4f9;
   --container-bg: #ffffff;
   --text-color: #333333;
+  --text-color-secondary: #ffffff;
   --text-muted: #555555;
   --border-color: #dddddd;
   --border-light: #eeeeee;
@@ -22,7 +23,7 @@
 }
 
 body {
-  font-family: "Host Grotesk", sans-serif;
+  font-family: "Host Grotesk", sans-serif !important;
   font-optical-sizing: auto;
   font-style: normal;
   background-color: var(--bg-color) !important;

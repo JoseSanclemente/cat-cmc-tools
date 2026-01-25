@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>File Name Generator</title>
+
+    <!-- Global font & styles -->
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap");
+      @import url("../styles/global.css");
+      @import url("../styles/pages/streamlined_banners_generator.css");
+    </style>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <!-- End Bootstrap -->
+
+    <!-- Components -->
+    <script src="../components/Header.js"></script>
+    <script src="../components/Button.js"></script>
+    <!-- End Components -->
+  </head>
+  <body>
+    <header-component
+      back-button
+      title="File Name Generator"
+    ></header-component>
+    <div class="form-container mt-5">
+      <div class="form-group">
+        <label>Start Date & Time:</label>
+        <div class="d-flex gap-2">
+          <input
+            type="date"
+            id="startDate"
+            class="flex-grow-1"
+            onchange="setInitialStartTime()"
+          />
+          <input type="time" id="startTime" class="flex-grow-1" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>End Date & Time:</label>
+        <div class="d-flex gap-2">
+          <input
+            type="date"
+            id="endDate"
+            class="flex-grow-1"
+            onchange="setInitialEndTime()"
+          />
+          <input type="time" id="endTime" class="flex-grow-1" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Ticket Number:</label>
+        <input type="text" id="ticketNumber" placeholder="Ex: SCTASK12345" />
+      </div>
+
+      <div class="form-group">
+        <label>eSpot Name:</label>
+        <input
+          type="text"
+          id="espotName"
+          placeholder="CMC_ESPOT_PCC_CATSAS_RIBBON_TOP"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Target:</label>
+        <select id="target">
+          <option value="All Customers">All Customers</option>
+          <option value="Only Specified DCN's can see this promotion">
+            Only Specified DCN's can see this promotion
+          </option>
+          <option value="Only guests can see this promotion">
+            Only guests can see this promotion
+          </option>
+          <option value="Only registered users can see this promotion">
+            Only registered users can see this promotion
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Campaign Name:</label>
+        <input
+          type="text"
+          id="campaignName"
+          placeholder="Ex: NewCampaignBanner"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Dealer Name:</label>
+        <input type="text" id="dealerName" placeholder="Ex: CATSAS" />
+      </div>
+
+      <button-component
+        type="primary"
+        label="Generate File Names"
+        onclick="generateNames()"
+      ></button-component>
+
+      <div class="output-section d-none" id="results">
+        <label for="contentFile" class="mt-2 d-block"
+          >Content File Output:</label
+        >
+        <textarea id="contentFile" readonly rows="1"></textarea>
+
+        <label for="webActivity" class="mt-2 d-block">Web Activity:</label>
+        <textarea id="webActivity" readonly rows="1"></textarea>
+
+        <label for="contentFolder" class="mt-2 d-block">Content Folder:</label>
+        <textarea id="contentFolder" readonly rows="1"></textarea>
+
+        <label for="activityFolder" class="mt-2 d-block"
+          >Activity Folder:</label
+        >
+        <textarea id="activityFolder" readonly rows="1"></textarea>
+
+        <label for="description" class="mt-2 d-block">Description:</label>
+        <textarea id="description" readonly rows="5"></textarea>
+      </div>
+    </div>
+
+    <script>
+      function setInitialStartTime() {
+        const startTimeEl = document.getElementById("startTime");
+        if (!startTimeEl.value) startTimeEl.value = "00:00";
+      }
+
+      function setInitialEndTime() {
+        const endTimeEl = document.getElementById("endTime");
+        if (!endTimeEl.value) endTimeEl.value = "23:59";
+      }
+
+      function generateNames() {
+        // Reset errors
+        document
+          .querySelectorAll(".input-error")
+          .forEach((el) => el.classList.remove("input-error"));
+
+        const startDateEl = document.getElementById("startDate");
+        const startTimeEl = document.getElementById("startTime");
+        const endDateEl = document.getElementById("endDate");
+        const endTimeEl = document.getElementById("endTime");
+        const ticketNumberEl = document.getElementById("ticketNumber");
+        const espotNameEl = document.getElementById("espotName");
+        const targetEl = document.getElementById("target");
+        const commonSuffixEl = document.getElementById("campaignName");
+        const dealerNameEl = document.getElementById("dealerName");
+
+        const startDate = startDateEl.value;
+        const startTime = startTimeEl.value;
+        const endDate = endDateEl.value;
+        const endTime = endTimeEl.value;
+        const ticketNumber = ticketNumberEl.value;
+        const espotName = espotNameEl.value;
+        const target = targetEl.value;
+        const campaignName = commonSuffixEl.value;
+        const dealerName = dealerNameEl.value;
+
+        let hasError = false;
+        const validate = (element, condition) => {
+          if (!condition) {
+            element.classList.add("input-error");
+            hasError = true;
+          }
+        };
+
+        validate(startDateEl, startDate);
+        validate(startTimeEl, startTime);
+        validate(endDateEl, endDate);
+        validate(endTimeEl, endTime);
+        validate(ticketNumberEl, ticketNumber);
+        validate(espotNameEl, espotName);
+        validate(targetEl, target);
+        validate(commonSuffixEl, campaignName);
+        validate(dealerNameEl, dealerName);
+
+        if (hasError) {
+          alert("Missing data: Please complete all required fields");
+          return;
+        }
+
+        // Generate file names
+        const formatDate = (dateStr) => {
+          if (!dateStr) return "";
+          const [year, month, day] = dateStr.split("-");
+          return `${month}${day}${year}`;
+        };
+
+        const formattedStartDate = formatDate(startDate);
+        const formattedEndDate = formatDate(endDate);
+
+        const contentFile = `${espotName} | ${formattedStartDate}-${formattedEndDate} | ${campaignName} | ${dealerName}`;
+
+        const webActivity = `${formattedStartDate}-${formattedEndDate}_${espotName}_${campaignName}`;
+        const contentFolder = `${formattedStartDate}-${formattedEndDate}_${campaignName}_Content_Folder`;
+        const activityFolder = `${formattedStartDate}-${formattedEndDate}_${campaignName}_Activity_Folder`;
+
+        const description = `Ticket Number: ${ticketNumber}
+Espot Name: ${espotName}
+Target: ${target}
+Start Date (CST): ${startDate} ${startTime}
+End Date (CST): ${endDate} ${endTime}`;
+
+        // Show results
+        document.getElementById("results").classList.remove("d-none");
+        document.getElementById("contentFile").value = contentFile;
+        document.getElementById("webActivity").value = webActivity;
+        document.getElementById("contentFolder").value = contentFolder;
+        document.getElementById("activityFolder").value = activityFolder;
+        document.getElementById("description").value = description;
+      }
+    </script>
+  </body>
+</html>

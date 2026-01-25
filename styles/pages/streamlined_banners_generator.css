@@ -27,33 +27,6 @@ select {
   font-size: 16px;
   box-sizing: border-box;
 }
-button {
-  background: var(--primary-color);
-  color: var(--secondary-color);
-  font-weight: bold;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  width: 100%;
-  margin-top: 10px;
-  transition: background 0.2s;
-}
-
-button:hover {
-  background: var(--primary-hover);
-}
-
-button.secondary {
-  background: var(--secondary-color);
-  color: var(--container-bg);
-  margin-top: 10px;
-}
-
-button.secondary:hover {
-  background: var(--secondary-hover);
-}
 
 .output-section {
   margin-top: 30px;
@@ -64,9 +37,8 @@ button.secondary:hover {
 .output-section textarea {
   width: 100%;
   padding: 10px;
-  height: 150px;
-  font-family: monospace;
-  font-size: 13px;
+  font-family: monospace !important;
+  font-size: 16px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   background: var(--input-bg);
