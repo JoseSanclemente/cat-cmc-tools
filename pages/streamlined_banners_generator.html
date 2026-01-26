@@ -52,22 +52,24 @@
       </div>
 
       <div class="form-group" id="categoryGroup">
-        <label>Category Name:</label>
+        <label for="category">Category Name:</label>
         <input type="text" id="category" placeholder="Ex: Batteries" />
       </div>
 
-      <div class="form-group">
-        <label>Promo Code (Optional):</label>
-        <input type="text" id="code" placeholder="Ex: BAT20" />
+      <div class="d-flex gap-4">
+        <div class="form-group w-25">
+          <label for="percentage">Discount Percentage:</label>
+          <input type="text" id="percentage" placeholder="Ex: 20" />
+        </div>
+
+        <div class="form-group flex-grow-1">
+          <label for="code">Promo Code (Optional):</label>
+          <input type="text" id="code" placeholder="Ex: BAT20" />
+        </div>
       </div>
 
       <div class="form-group">
-        <label>Discount Percentage:</label>
-        <input type="text" id="percentage" placeholder="Ex: 20" />
-      </div>
-
-      <div class="form-group">
-        <label id="ctaUrlLabel">CTA URL:</label>
+        <label for="ctaUrl" id="ctaUrlLabel">CTA URL:</label>
         <input
           type="text"
           id="ctaUrl"
@@ -76,7 +78,7 @@
       </div>
 
       <div class="form-group">
-        <label>Terms & Conditions External URL:</label>
+        <label for="externalUrl">Terms & Conditions External URL:</label>
         <input
           type="text"
           id="externalUrl"
@@ -85,33 +87,33 @@
       </div>
 
       <div class="form-group">
-        <label>Start Date & Time:</label>
-        <div class="d-flex gap-2">
+        <label for="startDate">Start Date & Time:</label>
+        <div class="d-flex gap-4">
           <input type="date" id="startDate" onchange="setInitialStartTime()" />
           <input type="time" id="startTime" />
         </div>
       </div>
 
       <div class="form-group">
-        <label>End Date & Time:</label>
-        <div class="d-flex gap-2">
+        <label for="endDate">End Date & Time:</label>
+        <div class="d-flex gap-4">
           <input type="date" id="endDate" onchange="setInitialEndTime()" />
           <input type="time" id="endTime" />
         </div>
       </div>
 
       <div class="form-group">
-        <label>Dealer Name:</label>
+        <label for="dealerName">Dealer Name:</label>
         <input type="text" id="dealerName" placeholder="Ex: CATSAS" />
       </div>
 
       <div class="form-group">
-        <label>Ticket Number:</label>
+        <label for="ticketNumber">Ticket Number:</label>
         <input type="text" id="ticketNumber" placeholder="Ex: SCTASK12345" />
       </div>
 
-      <div class="form-group">
-        <label>Target:</label>
+      <div class="form-group mb-5">
+        <label for="target">Target:</label>
         <select id="target">
           <option value="All Customers">All Customers</option>
           <option value="Only Specified DCN's can see this promotion">
