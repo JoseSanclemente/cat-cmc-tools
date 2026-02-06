@@ -495,7 +495,7 @@
           finalCode = finalCode.replace(/\[ENTER_CATEGORY_URL\]/g, ctaUrl);
         } else {
           const buttonRegex =
-            /<a\s+target="_blank"\s+class="CMC__Espot__Ribbon_CTA-Button[\s\S]*?<\/a>/;
+            /<a\s*target="_blank"\s+class="CMC__Espot__Ribbon_CTA-Button[\s\S]*?<\/a\s*>/;
           finalCode = finalCode.replace(buttonRegex, "");
         }
 
