@@ -192,12 +192,13 @@
     }
 
     .CMC__Espot__Ribbon_CTA-Button {
+      max-width: 106px !important;
       height: 32px;
       border-radius: var(--cat-border-radius-md);
       border: var(--cat-border-width-sm) solid
         var(--cat-theme-color-button-background);
       color: var(--cat-theme-color-content-knockout);
-      max-width: 106px !important;
+      line-height: var(--cat-line-height-14) !important;
     }
     .CMC__Espot__Ribbon_CTA-Button:hover {
       background-color: var(--cat-color-brand-blue-60);
@@ -235,7 +236,7 @@
       .CMC__Espot__Ribbon_CTA-Button {
         font-family: var(--cat-font-family-primary) !important;
         font-size: var(--cat-font-size-12) !important;
-        line-height: var(--cat-line-height-16) !important;
+        line-height: var(--cat-line-height-14) !important;
         font-weight: var(--cat-font-weight-regular) !important;
       }
       .CMC__Espot__Ribbon_Container .CMC__Espot__Ribbon_CTA-Button {
@@ -273,7 +274,7 @@
       </p>
       <a
         target="_blank"
-        class="CMC__Espot__Ribbon_CTA-Button cat-u-theme-typography-body-sm d-flex justify-content-center align-items-center px-1 px-md-2 w-100 text-decoration-none"
+        class="CMC__Espot__Ribbon_CTA-Button cat-u-theme-typography-body-sm d-flex justify-content-center align-items-center px-1 px-md-2 w-100 text-decoration-none text-center"
         href="[fullPathHomeURL]/[ENTER_CATEGORY_URL]"
         aria-label="[T_CTA]"
         >[T_CTA]</a
@@ -353,6 +354,14 @@
           T_OFFER_CATEGORY: "일부 [ENTER_CATEGORY] [ENTER_NUMBER]% 할인",
           T_OFFER_SITEWIDE: "다음 주문 시 [ENTER_NUMBER]% 할인",
           T_CODE_TEXT: " | 코드: [PROMO_CODE].",
+        },
+        nl: {
+          name: "🇳🇱 Dutch",
+          T_DETAILS: "Details",
+          T_CTA: "Nu winkelen",
+          T_OFFER_CATEGORY: "[ENTER_NUMBER]% van geselecteerd [ENTER_CATEGORY]",
+          T_OFFER_SITEWIDE: "[ENTER_NUMBER]% van uw volgende bestelling",
+          T_CODE_TEXT: " | Code: [PROMO_CODE].",
         },
         // ... Keep adding languages ...
       };
@@ -495,7 +504,7 @@
           finalCode = finalCode.replace(/\[ENTER_CATEGORY_URL\]/g, ctaUrl);
         } else {
           const buttonRegex =
-            /<a\s*target="_blank"\s+class="CMC__Espot__Ribbon_CTA-Button[\s\S]*?<\/a\s*>/;
+            /<a\s+target="_blank"\s+class="CMC__Espot__Ribbon_CTA-Button[\s\S]*?<\/a\s*>/;
           finalCode = finalCode.replace(buttonRegex, "");
         }
 
