@@ -37,6 +37,8 @@ textarea.code-input {
   font-family: monospace !important;
   font-size: 14px;
   min-height: 180px;
+  white-space: pre;
+  overflow-x: auto;
 }
 
 .section-title {
@@ -225,6 +227,8 @@ textarea.code-input {
   color: var(--text-color);
   resize: vertical;
   padding: 10px 12px;
+  white-space: pre;
+  overflow-x: auto;
 }
 
 .btn-copy-small {

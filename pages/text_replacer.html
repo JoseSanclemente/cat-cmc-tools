@@ -43,6 +43,7 @@
             class="code-input"
             placeholder="Paste your HTML code here..."
             oninput="updateAllMatchHints()"
+            wrap="off"
           ></textarea>
         </div>
 
@@ -274,7 +275,7 @@
               <span class="lang-name">${code} — ${name}</span>
               <button class="btn-copy-small" onclick="copyOutput('${code}')">Copy</button>
             </div>
-            <textarea id="output-${code}" readonly></textarea>
+            <textarea id="output-${code}" readonly wrap="off"></textarea>
           `;
           card.querySelector("textarea").value = modified;
           outputCards.appendChild(card);
