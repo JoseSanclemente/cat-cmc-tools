@@ -42,31 +42,26 @@
             id="htmlCode"
             class="code-input"
             placeholder="Paste your HTML code here..."
+            oninput="updateAllMatchHints()"
           ></textarea>
         </div>
 
-        <!-- Text to replace input -->
-        <div class="form-group">
-          <label for="textToFind">Text to Replace:</label>
-          <input
-            type="text"
-            id="textToFind"
-            placeholder="Enter the exact text you want to replace..."
-          />
+        <!-- Replacement groups -->
+        <div id="replacementGroups"></div>
+
+        <!-- Add Replacement button -->
+        <div class="mt-2 mb-3">
+          <button class="btn-add-group" onclick="addGroup()">+ Add Replacement</button>
         </div>
 
-        <!-- Language translations grid -->
-        <div class="form-group">
-          <div class="section-title">New Text per Language:</div>
-          <div class="lang-grid" id="langGrid"></div>
-          <div class="error-message" id="langError">
-            At least one language translation is required.
-          </div>
+        <!-- Global language error -->
+        <div class="error-message" id="globalLangError">
+          At least one language translation is required across all replacements.
         </div>
 
         <!-- Generate button -->
         <div class="d-flex justify-content-end mt-3">
-          <app-button label="Generate" type="primary" onclick="generateReplacements()"></app-button>
+          <button-component label="Generate" type="primary" onclick="generateReplacements()"></button-component>
         </div>
 
         <!-- Output section -->
@@ -118,30 +113,105 @@
         { code: "zh-TW", name: "Chinese (Traditional)" },
       ];
 
-      // Build the language input grid
-      const langGrid = document.getElementById("langGrid");
-      LANGUAGES.forEach(({ code, name }) => {
-        const row = document.createElement("div");
-        row.className = "lang-row";
-        row.innerHTML = `
-          <span class="lang-label">${code} — ${name}</span>
-          <input type="text" id="lang-${code}" data-lang="${code}" data-name="${name}" placeholder="${name}..." />
+      let groupCounter = 0;
+      const groupIds = [];
+
+      function addGroup() {
+        const id = ++groupCounter;
+        groupIds.push(id);
+
+        const langRowsHtml = LANGUAGES.map(
+          ({ code, name }) => `
+          <div class="lang-row">
+            <span class="lang-label">${code} — ${name}</span>
+            <input type="text" id="lang-${code}-${id}" placeholder="${name}..." />
+          </div>`
+        ).join("");
+
+        const groupEl = document.createElement("div");
+        groupEl.className = "replacement-group";
+        groupEl.id = `group-${id}`;
+        groupEl.innerHTML = `
+          <div class="group-header">
+            <span class="group-title">Replacement <span class="group-number"></span></span>
+            <button class="btn-remove-group" onclick="removeGroup(${id})">Remove</button>
+          </div>
+          <div class="form-group">
+            <label for="textToFind-${id}">Text to Replace:</label>
+            <input
+              type="text"
+              id="textToFind-${id}"
+              placeholder="Enter the exact text you want to replace..."
+              oninput="updateMatchHint(${id})"
+            />
+            <div id="matchHint-${id}" class="match-hint"></div>
+          </div>
+          <div class="form-group mb-0">
+            <div class="section-title">New Text per Language:</div>
+            <div class="lang-grid">${langRowsHtml}</div>
+          </div>
         `;
-        langGrid.appendChild(row);
-      });
+
+        document.getElementById("replacementGroups").appendChild(groupEl);
+        refreshGroupUI();
+      }
+
+      function removeGroup(id) {
+        const idx = groupIds.indexOf(id);
+        if (idx !== -1) groupIds.splice(idx, 1);
+        document.getElementById(`group-${id}`).remove();
+        refreshGroupUI();
+      }
+
+      function refreshGroupUI() {
+        const showRemove = groupIds.length > 1;
+        groupIds.forEach((id, idx) => {
+          const numEl = document.querySelector(`#group-${id} .group-number`);
+          if (numEl) numEl.textContent = idx + 1;
+          const removeBtn = document.querySelector(`#group-${id} .btn-remove-group`);
+          if (removeBtn) removeBtn.style.display = showRemove ? "inline-block" : "none";
+        });
+      }
+
+      function updateMatchHint(groupId) {
+        const htmlCode = document.getElementById("htmlCode").value;
+        const textToFindEl = document.getElementById(`textToFind-${groupId}`);
+        const hint = document.getElementById(`matchHint-${groupId}`);
+        if (!textToFindEl || !hint) return;
+
+        const textToFind = textToFindEl.value;
+
+        if (!textToFind || !htmlCode.trim()) {
+          hint.textContent = "";
+          hint.className = "match-hint";
+          return;
+        }
+
+        const count = htmlCode.split(textToFind).length - 1;
+        if (count > 0) {
+          hint.textContent = `✓ ${count} match${count > 1 ? "es" : ""} found`;
+          hint.className = "match-hint match-found";
+        } else {
+          hint.textContent = "No matches found";
+          hint.className = "match-hint match-not-found";
+        }
+      }
+
+      function updateAllMatchHints() {
+        groupIds.forEach((id) => updateMatchHint(id));
+      }
 
       function generateReplacements() {
         const htmlCodeEl = document.getElementById("htmlCode");
-        const textToFindEl = document.getElementById("textToFind");
-        const langErrorEl = document.getElementById("langError");
-
+        const globalLangError = document.getElementById("globalLangError");
         const htmlCode = htmlCodeEl.value;
-        const textToFind = textToFindEl.value;
 
         // Reset errors
         htmlCodeEl.classList.remove("input-error");
-        textToFindEl.classList.remove("input-error");
-        langErrorEl.classList.remove("visible");
+        globalLangError.classList.remove("visible");
+        groupIds.forEach((id) => {
+          document.getElementById(`textToFind-${id}`).classList.remove("input-error");
+        });
 
         let hasError = false;
 
@@ -150,34 +220,52 @@
           hasError = true;
         }
 
-        if (!textToFind) {
-          textToFindEl.classList.add("input-error");
-          hasError = true;
-        }
+        // Collect and validate each group
+        const groupData = groupIds.map((id) => {
+          const textToFindEl = document.getElementById(`textToFind-${id}`);
+          const textToFind = textToFindEl.value;
 
-        // Collect filled language translations
-        const results = [];
-        LANGUAGES.forEach(({ code, name }) => {
-          const input = document.getElementById(`lang-${code}`);
-          const translation = input.value;
-          if (translation !== "") {
-            results.push({ code, name, translation });
+          if (!textToFind) {
+            textToFindEl.classList.add("input-error");
+            hasError = true;
           }
+
+          const langTranslations = {};
+          LANGUAGES.forEach(({ code }) => {
+            const val = document.getElementById(`lang-${code}-${id}`).value;
+            if (val !== "") langTranslations[code] = val;
+          });
+
+          return { id, textToFind, langTranslations };
         });
 
-        if (results.length === 0) {
-          langErrorEl.classList.add("visible");
+        // Check at least one language has a translation somewhere
+        const anyTranslation = groupData.some(
+          (g) => Object.keys(g.langTranslations).length > 0
+        );
+        if (!anyTranslation) {
+          globalLangError.classList.add("visible");
           hasError = true;
         }
 
         if (hasError) return;
 
-        // Build output cards
+        // Build output — one card per language that has at least one translation
         const outputCards = document.getElementById("outputCards");
         outputCards.innerHTML = "";
 
-        results.forEach(({ code, name, translation }) => {
-          const modified = htmlCode.split(textToFind).join(translation);
+        const validGroups = groupData.filter((g) => g.textToFind);
+
+        LANGUAGES.forEach(({ code, name }) => {
+          const applicableGroups = validGroups.filter(
+            (g) => g.langTranslations[code] !== undefined
+          );
+          if (applicableGroups.length === 0) return;
+
+          let modified = htmlCode;
+          applicableGroups.forEach((g) => {
+            modified = modified.split(g.textToFind).join(g.langTranslations[code]);
+          });
 
           const card = document.createElement("div");
           card.className = "output-card";
@@ -188,18 +276,21 @@
             </div>
             <textarea id="output-${code}" readonly></textarea>
           `;
-          // Set value directly to avoid HTML entity encoding issues
           card.querySelector("textarea").value = modified;
           outputCards.appendChild(card);
         });
 
         document.getElementById("outputSection").classList.remove("d-none");
-        document.getElementById("outputSection").scrollIntoView({ behavior: "smooth", block: "start" });
+        document
+          .getElementById("outputSection")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
       }
 
       function copyOutput(code) {
         const textarea = document.getElementById(`output-${code}`);
-        const btn = textarea.closest(".output-card").querySelector(".btn-copy-small");
+        const btn = textarea
+          .closest(".output-card")
+          .querySelector(".btn-copy-small");
         copyToClipboard(textarea.value, btn, "Copy", "Copied!");
       }
 
@@ -252,6 +343,9 @@
           btn.textContent = defaultLabel;
         }, 1500);
       }
+
+      // Initialise with one group
+      addGroup();
     </script>
   </body>
 </html>
