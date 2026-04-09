@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML Text Replacer</title>
+
+    <!-- Global font & styles -->
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap");
+      @import url("../styles/global.css");
+      @import url("../styles/pages/text_replacer.css");
+    </style>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <!-- End Bootstrap -->
+
+    <!-- Components -->
+    <script src="../components/Header.js"></script>
+    <script src="../components/Button.js"></script>
+    <!-- End Components -->
+  </head>
+  <body>
+    <header-component back-button title="HTML Text Replacer"></header-component>
+    <main class="mt-5 mb-5">
+      <div class="form-container">
+        <!-- HTML Code input -->
+        <div class="form-group">
+          <label for="htmlCode">HTML Code:</label>
+          <textarea
+            id="htmlCode"
+            class="code-input"
+            placeholder="Paste your HTML code here..."
+          ></textarea>
+        </div>
+
+        <!-- Text to replace input -->
+        <div class="form-group">
+          <label for="textToFind">Text to Replace:</label>
+          <input
+            type="text"
+            id="textToFind"
+            placeholder="Enter the exact text you want to replace..."
+          />
+        </div>
+
+        <!-- Language translations grid -->
+        <div class="form-group">
+          <div class="section-title">New Text per Language:</div>
+          <div class="lang-grid" id="langGrid"></div>
+          <div class="error-message" id="langError">
+            At least one language translation is required.
+          </div>
+        </div>
+
+        <!-- Generate button -->
+        <div class="d-flex justify-content-end mt-3">
+          <app-button label="Generate" type="primary" onclick="generateReplacements()"></app-button>
+        </div>
+
+        <!-- Output section -->
+        <div class="output-section d-none" id="outputSection">
+          <div class="output-section-header">
+            <h3>Results</h3>
+            <button class="btn-copy-all" id="copyAllBtn" onclick="copyAll()">
+              Copy All
+            </button>
+          </div>
+          <div class="output-cards" id="outputCards"></div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const LANGUAGES = [
+        { code: "ar", name: "Arabic" },
+        { code: "bg", name: "Bulgarian" },
+        { code: "bn", name: "Bengali" },
+        { code: "cs", name: "Czech" },
+        { code: "da", name: "Danish" },
+        { code: "de", name: "German" },
+        { code: "el", name: "Greek" },
+        { code: "es", name: "Spanish" },
+        { code: "fi", name: "Finnish" },
+        { code: "fr", name: "French" },
+        { code: "he", name: "Hebrew" },
+        { code: "hi", name: "Hindi" },
+        { code: "id", name: "Indonesian" },
+        { code: "it", name: "Italian" },
+        { code: "ja", name: "Japanese" },
+        { code: "kn", name: "Kannada" },
+        { code: "ko", name: "Korean" },
+        { code: "nl", name: "Dutch" },
+        { code: "no", name: "Norwegian" },
+        { code: "pl", name: "Polish" },
+        { code: "pt", name: "Portuguese" },
+        { code: "ro", name: "Romanian" },
+        { code: "ru", name: "Russian" },
+        { code: "sv", name: "Swedish" },
+        { code: "ta", name: "Tamil" },
+        { code: "te", name: "Telugu" },
+        { code: "th", name: "Thai" },
+        { code: "tr", name: "Turkish" },
+        { code: "uk", name: "Ukrainian" },
+        { code: "vi", name: "Vietnamese" },
+        { code: "zh-CN", name: "Chinese (Simplified)" },
+        { code: "zh-TW", name: "Chinese (Traditional)" },
+      ];
+
+      // Build the language input grid
+      const langGrid = document.getElementById("langGrid");
+      LANGUAGES.forEach(({ code, name }) => {
+        const row = document.createElement("div");
+        row.className = "lang-row";
+        row.innerHTML = `
+          <span class="lang-label">${code} — ${name}</span>
+          <input type="text" id="lang-${code}" data-lang="${code}" data-name="${name}" placeholder="${name}..." />
+        `;
+        langGrid.appendChild(row);
+      });
+
+      function generateReplacements() {
+        const htmlCodeEl = document.getElementById("htmlCode");
+        const textToFindEl = document.getElementById("textToFind");
+        const langErrorEl = document.getElementById("langError");
+
+        const htmlCode = htmlCodeEl.value;
+        const textToFind = textToFindEl.value;
+
+        // Reset errors
+        htmlCodeEl.classList.remove("input-error");
+        textToFindEl.classList.remove("input-error");
+        langErrorEl.classList.remove("visible");
+
+        let hasError = false;
+
+        if (!htmlCode.trim()) {
+          htmlCodeEl.classList.add("input-error");
+          hasError = true;
+        }
+
+        if (!textToFind) {
+          textToFindEl.classList.add("input-error");
+          hasError = true;
+        }
+
+        // Collect filled language translations
+        const results = [];
+        LANGUAGES.forEach(({ code, name }) => {
+          const input = document.getElementById(`lang-${code}`);
+          const translation = input.value;
+          if (translation !== "") {
+            results.push({ code, name, translation });
+          }
+        });
+
+        if (results.length === 0) {
+          langErrorEl.classList.add("visible");
+          hasError = true;
+        }
+
+        if (hasError) return;
+
+        // Build output cards
+        const outputCards = document.getElementById("outputCards");
+        outputCards.innerHTML = "";
+
+        results.forEach(({ code, name, translation }) => {
+          const modified = htmlCode.split(textToFind).join(translation);
+
+          const card = document.createElement("div");
+          card.className = "output-card";
+          card.innerHTML = `
+            <div class="output-card-header">
+              <span class="lang-name">${code} — ${name}</span>
+              <button class="btn-copy-small" onclick="copyOutput('${code}')">Copy</button>
+            </div>
+            <textarea id="output-${code}" readonly></textarea>
+          `;
+          // Set value directly to avoid HTML entity encoding issues
+          card.querySelector("textarea").value = modified;
+          outputCards.appendChild(card);
+        });
+
+        document.getElementById("outputSection").classList.remove("d-none");
+        document.getElementById("outputSection").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function copyOutput(code) {
+        const textarea = document.getElementById(`output-${code}`);
+        const btn = textarea.closest(".output-card").querySelector(".btn-copy-small");
+        copyToClipboard(textarea.value, btn, "Copy", "Copied!");
+      }
+
+      function copyAll() {
+        const cards = document.querySelectorAll(".output-card");
+        if (!cards.length) return;
+
+        const parts = [];
+        cards.forEach((card) => {
+          const langName = card.querySelector(".lang-name").textContent;
+          const code = langName.split(" — ")[0].trim();
+          const raw = card.querySelector("textarea").value;
+          parts.push(`<!-- ${code} -->\n${raw}`);
+        });
+
+        const btn = document.getElementById("copyAllBtn");
+        copyToClipboard(parts.join("\n\n"), btn, "Copy All", "Copied!");
+      }
+
+      function copyToClipboard(text, btn, defaultLabel, successLabel) {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(
+            () => showFeedback(btn, defaultLabel, successLabel),
+            () => fallback(text, btn, defaultLabel, successLabel)
+          );
+        } else {
+          fallback(text, btn, defaultLabel, successLabel);
+        }
+      }
+
+      function fallback(text, btn, defaultLabel, successLabel) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          showFeedback(btn, defaultLabel, successLabel);
+        } catch (e) {
+          console.error("Copy failed", e);
+        }
+        document.body.removeChild(ta);
+      }
+
+      function showFeedback(btn, defaultLabel, successLabel) {
+        btn.textContent = successLabel;
+        setTimeout(() => {
+          btn.textContent = defaultLabel;
+        }, 1500);
+      }
+    </script>
+  </body>
+</html>
