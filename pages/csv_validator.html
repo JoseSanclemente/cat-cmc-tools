@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSV Validator</title>
+
+    <!-- Global font & styles -->
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap");
+      @import url("../styles/global.css");
+      @import url("../styles/pages/csv_validator.css");
+    </style>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <!-- End Bootstrap -->
+
+    <!-- Components -->
+    <script src="../components/Header.js"></script>
+    <!-- End Components -->
+  </head>
+  <body>
+    <header-component back-button title="CSV Validator"></header-component>
+    <main class="mt-5">
+      <div class="tool-column">
+
+      <!-- Upload Panel -->
+      <section class="panel">
+        <div class="panel-header">
+          <h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Upload CSV File
+          </h2>
+          <button id="clearBtn" class="btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem">
+            Clear
+          </button>
+        </div>
+
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" accept=".csv" />
+          <svg class="drop-zone-icon" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 16 12 12 8 16"></polyline>
+            <line x1="12" y1="12" x2="12" y2="21"></line>
+            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+          </svg>
+          <p class="drop-zone-text">Drag &amp; drop your CSV file here</p>
+          <p class="drop-zone-sub">or <span class="browse-link">click to browse</span></p>
+        </div>
+
+        <div class="file-info d-none" id="fileInfo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted); flex-shrink: 0">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+          <span class="file-name" id="fileName"></span>
+          <span class="file-size" id="fileSize"></span>
+        </div>
+
+        <div class="actions">
+          <button id="validateBtn" class="btn-primary" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            Validate
+          </button>
+        </div>
+      </section>
+
+      <!-- Results Panel -->
+      <section class="panel d-none" id="resultsPanel" style="min-width:0">
+        <div class="panel-header">
+          <h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            Validation Results
+          </h2>
+          <span id="resultsBadge" class="badge"></span>
+        </div>
+        <div id="resultsContent"></div>
+      </section>
+
+      </div><!-- /.tool-column -->
+
+      <!-- Rules Card -->
+      <aside class="rules-card">
+        <h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          Validation Rules
+        </h3>
+
+        <div class="rule-section">
+          <p class="rule-section-title">Filename</p>
+          <div class="rule-item">
+            <span class="rule-val"><code>attrval-catentry-excess-inventory-&lt;DealerCode&gt;-CAT-&lt;ADD|DELETE&gt;.csv</code></span>
+          </div>
+        </div>
+
+        <div class="rule-section">
+          <p class="rule-section-title">Structure</p>
+          <div class="rule-item">
+            <span class="rule-col">A1 (Row 1)</span>
+            <span class="rule-val"><code>CatalogEntryAttributeDictionary&shy;AttributeRelationshipCustom</code></span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-col">Columns</span>
+            <span class="rule-val">12 (11 named + 1 empty trailing)</span>
+          </div>
+        </div>
+
+        <div class="rule-section">
+          <p class="rule-section-title">Column Rules</p>
+          <div class="rule-item">
+            <span class="rule-col">PartNumber</span>
+            <span class="rule-val">Required</span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-col">AttrIdentifier</span>
+            <span class="rule-val">Must be <code>SPECIALS</code></span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-col">ValueIdentifier</span>
+            <span class="rule-val"><code>&lt;DealerCode&gt;~&lt;Clearance|Special|Sale|Bargain List&gt;</code></span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-col">Value</span>
+            <span class="rule-val">Must be empty</span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-col">Usage</span>
+            <span class="rule-val">Must be <code>Descriptive</code></span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-col">Sequence</span>
+            <span class="rule-val">Must be <code>1</code></span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-col">LanguageId</span>
+            <span class="rule-val">Must be a number</span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-col">Delete</span>
+            <span class="rule-val"><code>0</code> if ADD file · <code>1</code> if DELETE file</span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-col">PromoFrom</span>
+            <span class="rule-val">Optional · <code>MMMDDYYYY</code></span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-col">PromoTo</span>
+            <span class="rule-val">Optional · <code>MMMDDYYYY</code></span>
+          </div>
+        </div>
+      </aside>
+
+    </main>
+
+    <script>
+      const TEMPLATES = {
+        "CatalogEntryAttributeDictionaryAttributeRelationshipCustom": {
+          columnCount: 12,
+          headers: [
+            "PartNumber", "AttributeIdentifier", "ValueIdentifier", "Value",
+            "Usage", "Sequence", "Field3", "LanguageId", "Delete", "PromoFrom", "PromoTo"
+          ],
+          rules: {
+            PartNumber:          { required: true },
+            AttributeIdentifier: { required: true, constant: "SPECIALS" },
+            ValueIdentifier:     { required: true },
+            Value:               { constant: "" },
+            Usage:               { required: true, constant: "Descriptive" },
+            Sequence:            { required: true, constant: "1" },
+            LanguageId:          { required: true, type: "number" },
+            Delete:              { required: true, enum: ["0", "1"] },
+            PromoFrom:           { dateFormat: true },
+            PromoTo:             { dateFormat: true },
+          }
+        }
+      };
+
+      const DATE_REGEX = /^(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\d{5,6}$/i;
+      const FILE_PATTERN = /^attrval-catentry-excess-inventory-([^-]+)-CAT-(ADD|DELETE)\.csv$/i;
+      const MAX_ROW_ERRORS = 50;
+
+      function parseCSVLine(line) {
+        return line.split(",");
+      }
+
+      function extractDealerCode(filename) {
+        const match = filename.match(/excess-inventory-([^-]+)-CAT-ADD/i);
+        return match ? match[1] : null;
+      }
+
+      function validateCSV(content, filename) {
+        const result = {
+          filenameError: null,
+          filenameWarning: null,
+          templateError: null,
+          structureErrors: [],
+          headerErrors: [],
+          rowErrors: [],
+          validRowCount: 0,
+        };
+
+        if (!FILE_PATTERN.test(filename || "")) {
+          result.filenameError =
+            `"${filename}" does not match the expected format: ` +
+            `attrval-catentry-excess-inventory-<DealerCode>-CAT-<ADD|DELETE>.csv`;
+        }
+
+        const lines = content.split(/\r?\n/);
+
+        if (lines.length < 1 || lines[0].trim() === "") {
+          result.structureErrors.push("File is empty or missing the template ID row.");
+          return result;
+        }
+
+        const row1 = parseCSVLine(lines[0]);
+        const templateId = row1[0].trim();
+        const template = TEMPLATES[templateId];
+
+        if (!template) {
+          result.templateError =
+            `Unknown template identifier in A1: "${templateId}". ` +
+            `Expected: "${Object.keys(TEMPLATES).join('", "')}"`;
+          return result;
+        }
+
+        if (row1.length !== template.columnCount) {
+          result.structureErrors.push(
+            `Row 1: expected ${template.columnCount} columns (${template.columnCount - 1} commas), got ${row1.length}.`
+          );
+        }
+
+        if (lines.length < 2 || lines[1].trim() === "") {
+          result.structureErrors.push("Row 2 (headers) is missing.");
+          return result;
+        }
+
+        const row2 = parseCSVLine(lines[1]);
+
+        if (row2.length !== template.columnCount) {
+          result.structureErrors.push(
+            `Row 2 (headers): expected ${template.columnCount} columns, got ${row2.length}.`
+          );
+        }
+
+        template.headers.forEach((expected, i) => {
+          const actual = (row2[i] != null ? row2[i] : "").trim();
+          if (actual !== expected) {
+            result.headerErrors.push(
+              `Column ${i + 1}: expected "${expected}", got "${actual || "(empty)"}"`
+            );
+          }
+        });
+
+        const lastColHeader = (row2[template.columnCount - 1] != null ? row2[template.columnCount - 1] : "").trim();
+        if (lastColHeader !== "") {
+          result.headerErrors.push(
+            `Column ${template.columnCount} (last): expected empty, got "${lastColHeader}"`
+          );
+        }
+
+        if (result.structureErrors.length > 0 || result.headerErrors.length > 0) return result;
+
+        const { headers } = template;
+        const rules = { ...template.rules };
+
+        const dealerCode = extractDealerCode(filename || "");
+        if (dealerCode) {
+          rules.ValueIdentifier = { required: true, codePrefix: dealerCode, codeSuffix: ["Clearance", "Special", "Sale", "Bargain List"] };
+        } else if (!result.filenameError) {
+          result.filenameWarning =
+            `Could not extract dealer code from filename "${filename}". ` +
+            `ValueIdentifier format check skipped — expected filename pattern: ...-excess-inventory-{CODE}-CAT-ADD.csv`;
+        }
+
+        const upperFilename = (filename || "").toUpperCase();
+        if (upperFilename.includes("DELETE")) {
+          rules.Delete = { required: true, constant: "1" };
+        } else if (upperFilename.includes("ADD")) {
+          rules.Delete = { required: true, constant: "0" };
+        }
+
+        for (let i = 2; i < lines.length; i++) {
+          const line = lines[i];
+          if (line.trim() === "") continue;
+          result.validRowCount++;
+          const row = parseCSVLine(line);
+          const rowNum = i + 1;
+
+          headers.forEach((header, colIdx) => {
+            const rule = rules[header];
+            if (!rule) return;
+            const val = (row[colIdx] != null ? row[colIdx] : "").trim();
+
+            if (rule.required && val === "") {
+              result.rowErrors.push({ row: rowNum, col: header, message: "required but empty" });
+            } else if (rule.constant !== undefined && val !== rule.constant) {
+              const exp = rule.constant === "" ? "(empty)" : `"${rule.constant}"`;
+              result.rowErrors.push({ row: rowNum, col: header, message: `expected ${exp}, got "${val || "(empty)"}"` });
+            } else if (rule.enum && val !== "" && !rule.enum.includes(val)) {
+              result.rowErrors.push({ row: rowNum, col: header, message: `must be one of [${rule.enum.join(", ")}], got "${val}"` });
+            } else if (rule.type === "number" && val !== "" && isNaN(Number(val))) {
+              result.rowErrors.push({ row: rowNum, col: header, message: `must be a number, got "${val}"` });
+            } else if (rule.codePrefix !== undefined) {
+              const tilde = val.indexOf("~");
+              const prefix = tilde !== -1 ? val.slice(0, tilde) : val;
+              const suffix = tilde !== -1 ? val.slice(tilde + 1) : "";
+              if (prefix.toUpperCase() !== rule.codePrefix.toUpperCase()) {
+                result.rowErrors.push({ row: rowNum, col: header, message: `dealer code expected "${rule.codePrefix}", got "${prefix}"` });
+              }
+              if (rule.codeSuffix) {
+                const allowed = rule.codeSuffix.map((s) => s.toLowerCase());
+                if (!allowed.includes(suffix.toLowerCase())) {
+                  result.rowErrors.push({ row: rowNum, col: header, message: `type must be one of [${rule.codeSuffix.join(", ")}], got "${suffix || "(empty)"}"` });
+                }
+              }
+            } else if (rule.dateFormat && val !== "" && !DATE_REGEX.test(val)) {
+              result.rowErrors.push({ row: rowNum, col: header, message: `invalid date format (expected MMMDDYYYY e.g. SEP212024), got "${val}"` });
+            }
+          });
+        }
+
+        return result;
+      }
+
+      // DOM refs
+      const dropZone      = document.getElementById("dropZone");
+      const fileInput     = document.getElementById("fileInput");
+      const fileInfo      = document.getElementById("fileInfo");
+      const fileNameEl    = document.getElementById("fileName");
+      const fileSizeEl    = document.getElementById("fileSize");
+      const validateBtn   = document.getElementById("validateBtn");
+      const clearBtn      = document.getElementById("clearBtn");
+      const resultsPanel  = document.getElementById("resultsPanel");
+      const resultsBadge  = document.getElementById("resultsBadge");
+      const resultsContent = document.getElementById("resultsContent");
+
+      let selectedFile = null;
+
+      function formatBytes(bytes) {
+        if (bytes < 1024) return `${bytes} B`;
+        if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+      }
+
+      function setFile(file) {
+        if (!file) return;
+        if (!file.name.toLowerCase().endsWith(".csv")) {
+          alert("Please select a .csv file.");
+          return;
+        }
+        selectedFile = file;
+        fileNameEl.textContent = file.name;
+        fileSizeEl.textContent = formatBytes(file.size);
+        fileInfo.classList.remove("d-none");
+        validateBtn.disabled = false;
+        resultsPanel.classList.add("d-none");
+        resultsContent.innerHTML = "";
+      }
+
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files[0]) setFile(e.target.files[0]);
+      });
+
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("drag-over");
+      });
+
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("drag-over");
+      });
+
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("drag-over");
+        if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+      });
+
+      validateBtn.addEventListener("click", () => {
+        if (!selectedFile) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = validateCSV(e.target.result, selectedFile.name);
+          renderResults(result);
+        };
+        reader.readAsText(selectedFile);
+      });
+
+      clearBtn.addEventListener("click", () => {
+        selectedFile = null;
+        fileInput.value = "";
+        fileInfo.classList.add("d-none");
+        validateBtn.disabled = true;
+        resultsPanel.classList.add("d-none");
+        resultsContent.innerHTML = "";
+        dropZone.classList.remove("drag-over");
+      });
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function renderWarningGroup(message) {
+        return `
+          <div class="error-group">
+            <p class="error-group-title" style="color:#92400e">Filename Warning</p>
+            <div class="error-item" style="background-color:#fffbeb;border-color:#fcd34d;color:#78350f">
+              <span class="error-dot" style="background-color:#d97706"></span>
+              <span>${escapeHtml(message)}</span>
+            </div>
+          </div>`;
+      }
+
+      function renderErrorGroup(title, messages, remaining) {
+        const items = messages
+          .map(
+            (msg) => `
+              <div class="error-item">
+                <span class="error-dot"></span>
+                <span>${escapeHtml(msg)}</span>
+              </div>`
+          )
+          .join("");
+        const more =
+          remaining > 0
+            ? `<p class="error-more">… and ${remaining} more error${remaining !== 1 ? "s" : ""}</p>`
+            : "";
+        return `
+          <div class="error-group">
+            <p class="error-group-title">${escapeHtml(title)}</p>
+            ${items}
+            ${more}
+          </div>`;
+      }
+
+      function renderResults(result) {
+        const totalErrors =
+          (result.filenameError ? 1 : 0) +
+          (result.templateError ? 1 : 0) +
+          result.structureErrors.length +
+          result.headerErrors.length +
+          result.rowErrors.length;
+
+        resultsPanel.classList.remove("d-none");
+        resultsContent.innerHTML = "";
+
+        if (totalErrors === 0) {
+          resultsBadge.textContent = result.filenameWarning ? "Valid (warning)" : "Valid";
+          resultsBadge.className = "badge badge-success";
+          let html = `
+            <div class="result-success">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <div>
+                <p class="success-title">All checks passed</p>
+                <p class="success-sub">${result.validRowCount} data row${result.validRowCount !== 1 ? "s" : ""} validated successfully.</p>
+              </div>
+            </div>`;
+          if (result.filenameWarning) html += renderWarningGroup(result.filenameWarning);
+          resultsContent.innerHTML = html;
+          return;
+        }
+
+        resultsBadge.textContent = `${totalErrors} error${totalErrors !== 1 ? "s" : ""}`;
+        resultsBadge.className = "badge badge-error";
+
+        let html = "";
+
+        if (result.filenameError) {
+          html += renderErrorGroup("Filename Error", [result.filenameError], 0);
+        }
+        if (result.filenameWarning) {
+          html += renderWarningGroup(result.filenameWarning);
+        }
+        if (result.templateError) {
+          html += renderErrorGroup("Template Mismatch", [result.templateError], 0);
+        }
+        if (result.structureErrors.length > 0) {
+          html += renderErrorGroup("Structure Errors", result.structureErrors, 0);
+        }
+        if (result.headerErrors.length > 0) {
+          html += renderErrorGroup("Header Errors", result.headerErrors, 0);
+        }
+        if (result.rowErrors.length > 0) {
+          const shown = result.rowErrors.slice(0, MAX_ROW_ERRORS);
+          const remaining = result.rowErrors.length - shown.length;
+          const messages = shown.map((e) => `Row ${e.row} — ${e.col}: ${e.message}`);
+          html += renderErrorGroup(
+            `Data Errors (${result.rowErrors.length} total)`,
+            messages,
+            remaining
+          );
+        }
+
+        resultsContent.innerHTML = html;
+      }
+    </script>
+  </body>
+</html>

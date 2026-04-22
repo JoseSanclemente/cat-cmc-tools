@@ -205,7 +205,7 @@
       function generateReplacements() {
         const htmlCodeEl = document.getElementById("htmlCode");
         const globalLangError = document.getElementById("globalLangError");
-        const htmlCode = htmlCodeEl.value;
+        const htmlCode = htmlCodeEl.value.trimEnd();
 
         // Reset errors
         htmlCodeEl.classList.remove("input-error");
