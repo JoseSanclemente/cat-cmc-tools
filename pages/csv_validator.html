@@ -128,7 +128,7 @@
           </div>
           <div class="rule-item">
             <span class="rule-col">Columns</span>
-            <span class="rule-val">11</span>
+            <span class="rule-val">12 (11 named + 1 empty trailing)</span>
           </div>
         </div>
 
@@ -182,7 +182,7 @@
     <script>
       const TEMPLATES = {
         "CatalogEntryAttributeDictionaryAttributeRelationshipCustom": {
-          columnCount: 11,
+          columnCount: 12,
           headers: [
             "PartNumber", "AttributeIdentifier", "ValueIdentifier", "Value",
             "Usage", "Sequence", "Field3", "LanguageId", "Delete", "PromoFrom", "PromoTo"
@@ -277,6 +277,13 @@
             );
           }
         });
+
+        const lastColHeader = (row2[template.columnCount - 1] != null ? row2[template.columnCount - 1] : "").trim();
+        if (lastColHeader !== "") {
+          result.headerErrors.push(
+            `Column ${template.columnCount} (last): expected empty, got "${lastColHeader}"`
+          );
+        }
 
         if (result.structureErrors.length > 0 || result.headerErrors.length > 0) return result;
 
